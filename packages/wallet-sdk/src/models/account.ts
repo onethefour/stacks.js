@@ -1,32 +1,22 @@
-import { getPublicKeyFromPrivate, publicKeyToAddress } from '@stacks/encryption';
+import {
+  ecPairToAddress,
+  getPublicKeyFromPrivate,
+  hashCode,
+  hashSha256Sync,
+  publicKeyToAddress,
+} from '@stacks/encryption';
+import { makeAuthResponse as _makeAuthResponse } from '@stacks/auth';
 import { TransactionVersion, getAddressFromPrivateKey } from '@stacks/transactions';
-
-const PERSON_TYPE = 'Person';
-const CONTEXT = 'http://schema.org';
-const IMAGE_TYPE = 'ImageObject';
-
-export interface ProfileImage {
-  '@type': typeof IMAGE_TYPE;
-  name: string;
-  contentUrl: string;
-}
-
-export interface Profile {
-  '@type': typeof PERSON_TYPE;
-  '@context': typeof CONTEXT;
-  apps?: {
-    [origin: string]: string;
-  };
-  appsMeta?: {
-    [origin: string]: {
-      publicKey: string;
-      storage: string;
-    };
-  };
-  name?: string;
-  image?: ProfileImage[];
-  [key: string]: any;
-}
+import { fromBase58 } from 'bip32';
+import {
+  DEFAULT_PROFILE,
+  fetchAccountProfileUrl,
+  fetchProfileFromUrl,
+  Profile,
+  signAndUploadProfile,
+} from './profile';
+import { ECPair } from 'bitcoinjs-lib';
+import { connectToGaiaHubWithConfig, getHubInfo, makeGaiaAssociationToken } from '../utils';
 
 export interface Account {
   stxPrivateKey: string;
@@ -68,4 +58,88 @@ export const getGaiaAddress = (account: Account) => {
   const publicKey = getPublicKeyFromPrivate(account.dataPrivateKey);
   const address = publicKeyToAddress(publicKey);
   return address;
+};
+
+export const getAppPrivateKey = ({
+  account,
+  appDomain,
+}: {
+  account: Account;
+  appDomain: string;
+}) => {
+  const hashBuffer = hashSha256Sync(Buffer.from(`${appDomain}${account.salt}`));
+  const hash = hashBuffer.toString('hex');
+  const appIndex = hashCode(hash);
+  const appsNode = fromBase58(account.appsKey);
+  const appKeychain = appsNode.deriveHardened(appIndex);
+  if (!appKeychain.privateKey) throw 'Needs private key';
+  return appKeychain.privateKey.toString('hex');
+};
+
+export const makeAuthResponse = async ({
+  account,
+  appDomain,
+  transitPublicKey,
+  scopes = [],
+  gaiaHubUrl,
+}: {
+  account: Account;
+  appDomain: string;
+  transitPublicKey: string;
+  scopes?: string[];
+  gaiaHubUrl: string;
+}) => {
+  const appPrivateKey = getAppPrivateKey({ account, appDomain });
+  const hubInfo = await getHubInfo(gaiaHubUrl);
+  const profileUrl = await fetchAccountProfileUrl({ account, gaiaHubUrl: hubInfo.read_url_prefix });
+  const profile = (await fetchProfileFromUrl(profileUrl)) || DEFAULT_PROFILE;
+  if (scopes.includes('publish_data')) {
+    if (!profile.apps) {
+      profile.apps = {};
+    }
+    const challengeSigner = ECPair.fromPrivateKey(Buffer.from(appPrivateKey, 'hex'));
+    const storageUrl = `${hubInfo.read_url_prefix}${ecPairToAddress(challengeSigner)}/`;
+    profile.apps[appDomain] = storageUrl;
+    if (!profile.appsMeta) {
+      profile.appsMeta = {};
+    }
+    profile.appsMeta[appDomain] = {
+      storage: storageUrl,
+      publicKey: challengeSigner.publicKey.toString('hex'),
+    };
+    const gaiaHubConfig = connectToGaiaHubWithConfig({
+      hubInfo,
+      privateKey: account.dataPrivateKey,
+      gaiaHubUrl,
+    });
+    await signAndUploadProfile({ profile, account, gaiaHubUrl, gaiaHubConfig });
+  }
+
+  const compressedAppPublicKey = getPublicKeyFromPrivate(appPrivateKey.slice(0, 64));
+  const associationToken = makeGaiaAssociationToken({
+    privateKey: account.dataPrivateKey,
+    childPublicKeyHex: compressedAppPublicKey,
+  });
+
+  return _makeAuthResponse(
+    account.dataPrivateKey,
+    {
+      ...(profile || {}),
+      stxAddress: {
+        testnet: getStxAddress({ account, transactionVersion: TransactionVersion.Testnet }),
+        mainnet: getStxAddress({ account, transactionVersion: TransactionVersion.Mainnet }),
+      },
+    },
+    account.username || '',
+    {
+      profileUrl,
+    },
+    undefined,
+    appPrivateKey,
+    undefined,
+    transitPublicKey,
+    gaiaHubUrl,
+    undefined,
+    associationToken
+  );
 };

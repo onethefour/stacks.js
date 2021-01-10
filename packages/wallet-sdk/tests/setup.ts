@@ -1,7 +1,7 @@
 import { GlobalWithFetchMock } from 'jest-fetch-mock';
-import { config as bskConfig } from 'blockstack';
+import { config as blockstackConfig } from '@stacks/common';
 
-bskConfig.logLevel = 'none';
+blockstackConfig.logLevel = 'none';
 
 const customGlobal: GlobalWithFetchMock = (global as any) as GlobalWithFetchMock;
 customGlobal.fetch = require('jest-fetch-mock');

@@ -2,6 +2,7 @@ import { Wallet } from './wallet';
 import { Account } from './account';
 import { GaiaHubConfig, connectToGaiaHub, uploadToGaiaHub } from '@stacks/storage';
 import { decryptContent, encryptContent, getPublicKeyFromPrivate } from '@stacks/encryption';
+import { fetchPrivate } from '@stacks/common';
 
 export interface ConfigApp {
   origin: string;
@@ -26,13 +27,13 @@ export interface WalletConfig {
 }
 
 export const createWalletGaiaConfig = async ({
-  gaiaUrl,
+  gaiaHubUrl,
   wallet,
 }: {
-  gaiaUrl: string;
+  gaiaHubUrl: string;
   wallet: Wallet;
 }): Promise<GaiaHubConfig> => {
-  return connectToGaiaHub(gaiaUrl, wallet.configPrivateKey);
+  return connectToGaiaHub(gaiaHubUrl, wallet.configPrivateKey);
 };
 
 export const getOrCreateWalletConfig = async ({
@@ -66,7 +67,7 @@ export const fetchWalletConfig = async ({
   gaiaHubConfig: GaiaHubConfig;
 }) => {
   try {
-    const response = await fetch(
+    const response = await fetchPrivate(
       `${gaiaHubConfig.url_prefix}${gaiaHubConfig.address}/wallet-config.json`
     );
     if (!response.ok) return null;

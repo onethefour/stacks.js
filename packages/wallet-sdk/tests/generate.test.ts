@@ -1,5 +1,11 @@
 import { validateMnemonic } from 'bip39';
-import { generateSecretKey, generateWallet, getGaiaAddress, getStxAddress } from '../src';
+import {
+  generateSecretKey,
+  generateWallet,
+  getGaiaAddress,
+  getStxAddress,
+  getAppPrivateKey,
+} from '../src';
 import { TransactionVersion } from '@stacks/transactions';
 
 describe(generateSecretKey, () => {
@@ -58,5 +64,9 @@ describe(generateWallet, () => {
     );
 
     expect(getGaiaAddress(account)).toEqual('1JeTQ5cQjsD57YGcsVFhwT7iuQUXJR6BSk');
+
+    expect(getAppPrivateKey({ account, appDomain: 'https://banter.pub' })).toEqual(
+      '6f8b6a170f8b2ee57df5ead49b0f4c8acde05f9e1c4c6ef8223d6a42fabfa314'
+    );
   });
 });

@@ -10,18 +10,18 @@ import {
   WalletConfig,
 } from '../../src/models/wallet-config';
 import { mockWallet, mockWalletConfig, mockGaiaHubInfo } from '../mocks';
-import { config as blockstackConfig } from '@stacks/common';
 import { decryptContent } from '@stacks/encryption';
 
-blockstackConfig.logLevel = 'none';
-
-const gaiaUrl = 'https://gaia.blockstack.org/hub';
+const gaiaHubUrl = 'https://gaia.blockstack.org/hub';
 
 describe(fetchWalletConfig, () => {
   test('returns no config if not found', async () => {
     fetchMock.once(mockGaiaHubInfo).once('', { status: 404 });
 
-    const gaiaHubConfig = await createWalletGaiaConfig({ wallet: mockWallet, gaiaUrl });
+    const gaiaHubConfig = await createWalletGaiaConfig({
+      wallet: mockWallet,
+      gaiaHubUrl,
+    });
     const config = await fetchWalletConfig({ wallet: mockWallet, gaiaHubConfig });
     expect(config).toEqual(null);
   });
@@ -32,7 +32,10 @@ describe(fetchWalletConfig, () => {
 
     fetchMock.once(mockGaiaHubInfo).once(encrypted);
 
-    const gaiaHubConfig = await createWalletGaiaConfig({ wallet: mockWallet, gaiaUrl });
+    const gaiaHubConfig = await createWalletGaiaConfig({
+      wallet: mockWallet,
+      gaiaHubUrl,
+    });
     const config = await fetchWalletConfig({ wallet: mockWallet, gaiaHubConfig });
     expect(config).not.toBeFalsy();
     if (!config) {
@@ -53,7 +56,10 @@ test('creates a config if not found', async () => {
     .once(JSON.stringify({ publicUrl: 'asdf' }));
 
   const wallet = mockWallet;
-  const gaiaHubConfig = await createWalletGaiaConfig({ wallet: mockWallet, gaiaUrl });
+  const gaiaHubConfig = await createWalletGaiaConfig({
+    wallet: mockWallet,
+    gaiaHubUrl,
+  });
   const walletConfig = await getOrCreateWalletConfig({ wallet, gaiaHubConfig });
   expect(Object.keys(walletConfig.accounts[0].apps).length).toEqual(0);
   const [url, uploadResult] = fetchMock.mock.calls[2];
@@ -80,7 +86,10 @@ test('updates existing wallet config with auth info', async () => {
 
   const wallet = mockWallet;
   const [account] = wallet.accounts;
-  const gaiaHubConfig = await createWalletGaiaConfig({ wallet: mockWallet, gaiaUrl });
+  const gaiaHubConfig = await createWalletGaiaConfig({
+    wallet: mockWallet,
+    gaiaHubUrl,
+  });
   const walletConfig = await getOrCreateWalletConfig({ wallet, gaiaHubConfig });
   const app: ConfigApp = {
     origin: 'http://localhost:5000',
@@ -116,7 +125,10 @@ test('can add meta info to wallet config', async () => {
     .once(JSON.stringify({ publicUrl: 'asdf' }));
 
   const wallet = mockWallet;
-  const gaiaHubConfig = await createWalletGaiaConfig({ wallet: mockWallet, gaiaUrl });
+  const gaiaHubConfig = await createWalletGaiaConfig({
+    wallet: mockWallet,
+    gaiaHubUrl,
+  });
   const walletConfig = await getOrCreateWalletConfig({ wallet, gaiaHubConfig });
   const newConfig = {
     ...walletConfig,

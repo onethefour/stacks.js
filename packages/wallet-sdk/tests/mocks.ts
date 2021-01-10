@@ -19,6 +19,8 @@ export const mockWallet: Wallet = {
   ],
 };
 
+export const mockAccount = mockWallet.accounts[0];
+
 export const mockWalletConfig: WalletConfig = {
   accounts: [
     {
@@ -41,3 +43,53 @@ export const mockGaiaHubInfo = JSON.stringify({
   challenge_text: '["gaiahub","0","gaia-0","blockstack_storage_please_sign"]',
   latest_auth_version: 'v1',
 });
+
+export const mockProfileResponse = JSON.stringify([
+  {
+    token:
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NksifQ.eyJqdGkiOiJmYmY1YjU4OC03NjA1LTQ4YWEtOWZkZi1iMTI2ODhhMGQwNDciLCJpYXQiOiIyMDIwLTA1LTE5VDEyOjQwOjA5LjQ4OVoiLCJleHAiOiIyMDIxLTA1LTE5VDEyOjQwOjA5LjQ4OVoiLCJzdWJqZWN0Ijp7InB1YmxpY0tleSI6IjAzZTkzYWU2NWQ2Njc1MDYxYTE2N2MzNGI4MzIxYmVmODc1OTQ0NjhlOWIyZGQxOWMwNWE2N2E3YjRjYWVmYTAxNyJ9LCJpc3N1ZXIiOnsicHVibGljS2V5IjoiMDNlOTNhZTY1ZDY2NzUwNjFhMTY3YzM0YjgzMjFiZWY4NzU5NDQ2OGU5YjJkZDE5YzA1YTY3YTdiNGNhZWZhMDE3In0sImNsYWltIjp7IkB0eXBlIjoiUGVyc29uIiwiQGNvbnRleHQiOiJodHRwOi8vc2NoZW1hLm9yZyIsImFwcHMiOnsiaHR0cHM6Ly9iYW50ZXIucHViIjoiaHR0cHM6Ly9nYWlhLmJsb2Nrc3RhY2sub3JnL2h1Yi8xRGt1QUNodWZZalRrVENlakpnU3p0dXFwNUtkeWtwV2FwLyIsImh0dHA6Ly8xMjcuMC4wLjE6MzAwMCI6Imh0dHBzOi8vZ2FpYS5ibG9ja3N0YWNrLm9yZy9odWIvMTVoQUxuRUo4ZnZYTmdSeXptVnNwRHlaY0dFeExHSE5TZi8iLCJodHRwczovL2Jsb2Nrc3RhY2suZ2l0aHViLmlvIjoiaHR0cHM6Ly9nYWlhLmJsb2Nrc3RhY2sub3JnL2h1Yi8xRUR1dktmenVOUlVlbnR6MXQ1amZ4VDlmVzFIUDJOSkdXLyJ9LCJhcGkiOnsiZ2FpYUh1YkNvbmZpZyI6eyJ1cmxfcHJlZml4IjoiaHR0cHM6Ly9nYWlhLmJsb2Nrc3RhY2sub3JnL2h1Yi8ifSwiZ2FpYUh1YlVybCI6Imh0dHBzOi8vaHViLmJsb2Nrc3RhY2sub3JnIn0sImFwcHNNZXRhIjp7Imh0dHBzOi8vYmFudGVyLnB1YiI6eyJzdG9yYWdlIjoiaHR0cHM6Ly9nYWlhLmJsb2Nrc3RhY2sub3JnL2h1Yi8xRGt1QUNodWZZalRrVENlakpnU3p0dXFwNUtkeWtwV2FwLyIsInB1YmxpY0tleSI6IjAyMDIxZWZkMGVjM2E0Y2ZkZGQ5ZjA1OTg4NGE4MzRiYjMzMmM4N2ZkYWRhMDUzODA3NzBiZmY1M2Q1ODQ2ZThhYSJ9fX19.GyFt9EZXwr8_jbunvrA38Rv80oBsgjokEPz4SXmZ724I8FCn22g7PK5tWBmpLCZAqVaaYgls9oJcX0vYN-BVsA',
+    decodedToken: {
+      header: {
+        typ: 'JWT',
+        alg: 'ES256K',
+      },
+      payload: {
+        jti: 'fbf5b588-7605-48aa-9fdf-b12688a0d047',
+        iat: '2020-05-19T12:40:09.489Z',
+        exp: '2021-05-19T12:40:09.489Z',
+        subject: {
+          publicKey: '03e93ae65d6675061a167c34b8321bef87594468e9b2dd19c05a67a7b4caefa017',
+        },
+        issuer: {
+          publicKey: '03e93ae65d6675061a167c34b8321bef87594468e9b2dd19c05a67a7b4caefa017',
+        },
+        claim: {
+          '@type': 'Person',
+          '@context': 'http://schema.org',
+          apps: {
+            'https://banter.pub':
+              'https://gaia.blockstack.org/hub/1DkuAChufYjTkTCejJgSztuqp5KdykpWap/',
+            'http://127.0.0.1:3000':
+              'https://gaia.blockstack.org/hub/15hALnEJ8fvXNgRyzmVspDyZcGExLGHNSf/',
+            'https://blockstack.github.io':
+              'https://gaia.blockstack.org/hub/1EDuvKfzuNRUentz1t5jfxT9fW1HP2NJGW/',
+          },
+          api: {
+            gaiaHubConfig: {
+              url_prefix: 'https://gaia.blockstack.org/hub/',
+            },
+            gaiaHubUrl: 'https://hub.blockstack.org',
+          },
+          appsMeta: {
+            'https://banter.pub': {
+              storage: 'https://gaia.blockstack.org/hub/1DkuAChufYjTkTCejJgSztuqp5KdykpWap/',
+              publicKey: '02021efd0ec3a4cfddd9f059884a834bb332c87fdada05380770bff53d5846e8aa',
+            },
+          },
+        },
+      },
+      signature:
+        'GyFt9EZXwr8_jbunvrA38Rv80oBsgjokEPz4SXmZ724I8FCn22g7PK5tWBmpLCZAqVaaYgls9oJcX0vYN-BVsA',
+    },
+  },
+]);
