@@ -1,5 +1,5 @@
 import { validateMnemonic } from 'bip39';
-import { generateSecretKey, generateWallet, getStxAddress } from '../src';
+import { generateSecretKey, generateWallet, getGaiaAddress, getStxAddress } from '../src';
 import { TransactionVersion } from '@stacks/transactions';
 
 describe(generateSecretKey, () => {
@@ -57,6 +57,6 @@ describe(generateWallet, () => {
       'SP384CVPNDTYA0E92TKJZQTYXQHNZSWGCAG7SAPVB'
     );
 
-    // expect(getGaiaAddress(account)).toEqual('1JeTQ5cQjsD57YGcsVFhwT7iuQUXJR6BSk)
+    expect(getGaiaAddress(account)).toEqual('1JeTQ5cQjsD57YGcsVFhwT7iuQUXJR6BSk');
   });
 });

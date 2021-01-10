@@ -1,6 +1,5 @@
 import { fromBase58 } from 'bip32';
 import { Account } from './account';
-import { Config } from './config';
 
 /**
  * This object represents the keys that were derived from the root-level
@@ -14,7 +13,6 @@ export interface WalletKeys {
 
 export interface Wallet extends WalletKeys {
   encryptedSecretKey: string;
-  config: Config;
   accounts: Account[];
 }
 

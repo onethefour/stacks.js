@@ -79,5 +79,6 @@ export const deriveAccount = ({
     dataPrivateKey,
     appsKey,
     salt,
+    index,
   };
 };

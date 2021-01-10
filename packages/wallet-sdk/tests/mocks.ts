@@ -1,4 +1,4 @@
-import { Wallet } from '../src';
+import { Wallet, WalletConfig } from '../src';
 
 export const mockWallet: Wallet = {
   salt: 'c15619adafe7e75a195a1a2b5788ca42e585a3fd181ae2ff009c6089de54ed9e',
@@ -13,9 +13,31 @@ export const mockWallet: Wallet = {
       dataPrivateKey: 'a29c3e73dba79ab0f84cb792bafd65ec71f243ebe67a7ebd842ef5cdce3b21eb',
       appsKey:
         'xprvA1y4zBndD83n6PWgVH6ivkTpNQ2WU1UGPg9hWa2q8sCANa7YrYMZFHWMhrbpsarxXMuQRa4jtaT2YXugwsKrjFgn765tUHu9XjyiDFEjB7f',
+      index: 0,
+      salt: 'c15619adafe7e75a195a1a2b5788ca42e585a3fd181ae2ff009c6089de54ed9e',
     },
   ],
-  config: {
-    accounts: [],
-  },
 };
+
+export const mockWalletConfig: WalletConfig = {
+  accounts: [
+    {
+      username: 'hankstoever.id',
+      apps: {
+        'http://localhost:3000': {
+          origin: 'http://localhost:3000',
+          scopes: ['read_write'],
+          name: 'Tester',
+          appIcon: 'http://example.com/icon.png',
+          lastLoginAt: new Date().getTime(),
+        },
+      },
+    },
+  ],
+};
+
+export const mockGaiaHubInfo = JSON.stringify({
+  read_url_prefix: 'https://gaia.blockstack.org/hub/',
+  challenge_text: '["gaiahub","0","gaia-0","blockstack_storage_please_sign"]',
+  latest_auth_version: 'v1',
+});

@@ -4,11 +4,11 @@
     "noEmit": true,
     "rootDir": "../",
     "paths": {
-      "@stacks/keychain": ["./src/index"]
+      "@stacks/wallet-sdk": ["./src/index"]
     }
   },
   "include": [
     "./**/*",
-    "../src/**/*",
+    "../src/**/*"
   ]
 }

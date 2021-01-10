@@ -1,3 +1,4 @@
+import { getPublicKeyFromPrivate, publicKeyToAddress } from '@stacks/encryption';
 import { TransactionVersion, getAddressFromPrivateKey } from '@stacks/transactions';
 
 const PERSON_TYPE = 'Person';
@@ -34,6 +35,7 @@ export interface Account {
   username?: string;
   profile?: Profile;
   appsKey: string;
+  index: number;
 }
 
 export const getStxAddress = ({
@@ -44,4 +46,26 @@ export const getStxAddress = ({
   transactionVersion?: TransactionVersion;
 }): string => {
   return getAddressFromPrivateKey(account.stxPrivateKey, transactionVersion);
+};
+
+/**
+ * Get the display name of an account.
+ *
+ * If the account has a username, it will return the first part of the username, so `myname.id` => `myname`, and
+ * `myname.blockstack.id` => `myname`.
+ *
+ * If the account has no username, it returns `Account ${acount.index}`
+ *
+ */
+export const getAccountDisplayName = (account: Account) => {
+  if (account.username) {
+    return account.username.split('.')[0];
+  }
+  return `Account ${account.index}`;
+};
+
+export const getGaiaAddress = (account: Account) => {
+  const publicKey = getPublicKeyFromPrivate(account.dataPrivateKey);
+  const address = publicKeyToAddress(publicKey);
+  return address;
 };
