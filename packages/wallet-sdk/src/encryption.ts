@@ -8,9 +8,8 @@ import { decrypt as triplesecDecrypt } from 'triplesec';
  * @param password - Password for data
  * @return the raw mnemonic phrase
  */
-export async function decrypt(dataBuffer: Buffer | string, password: string): Promise<string> {
-  const result = await decryptMnemonic(dataBuffer, password, triplesecDecrypt);
-  return result;
+export function decrypt(dataBuffer: Buffer | string, password: string): Promise<string> {
+  return decryptMnemonic(dataBuffer, password, triplesecDecrypt);
 }
 
 /**
@@ -19,7 +18,6 @@ export async function decrypt(dataBuffer: Buffer | string, password: string): Pr
  * @param password - Password to encrypt mnemonic with
  * @return The encrypted phrase
  * */
-export async function encrypt(phrase: string, password: string): Promise<Buffer> {
-  const result = await encryptMnemonic(phrase, password);
-  return result;
+export function encrypt(phrase: string, password: string): Promise<Buffer> {
+  return encryptMnemonic(phrase, password);
 }
