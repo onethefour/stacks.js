@@ -1,6 +1,6 @@
 {
   "name": "@stacks/wallet-sdk",
-  "version": "0.17.7",
+  "version": "1.0.0-beta.21",
   "description": "A library for building Stacks blockchain wallets",
   "main": "./dist/index.js",
   "umd:main": "./dist/wallet-sdk.umd.production.js",
