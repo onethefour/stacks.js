@@ -111,7 +111,15 @@ export async function uploadProfile({
   const identityHubConfig =
     gaiaHubConfig || (await connectToGaiaHub(gaiaHubUrl, account.dataPrivateKey));
 
-  await uploadToGaiaHub(DEFAULT_PROFILE_FILE_NAME, signedProfileTokenData, identityHubConfig);
+  await uploadToGaiaHub(
+    DEFAULT_PROFILE_FILE_NAME,
+    signedProfileTokenData,
+    identityHubConfig,
+    undefined,
+    undefined,
+    undefined,
+    true
+  );
 }
 
 export const signAndUploadProfile = async ({
