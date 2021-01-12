@@ -51,7 +51,7 @@ export const getAccountDisplayName = (account: Account) => {
   if (account.username) {
     return account.username.split('.')[0];
   }
-  return `Account ${account.index}`;
+  return `Account ${account.index + 1}`;
 };
 
 export const getGaiaAddress = (account: Account) => {

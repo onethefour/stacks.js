@@ -93,7 +93,15 @@ export const updateWalletConfig = async ({
   gaiaHubConfig: GaiaHubConfig;
 }) => {
   const encrypted = await encryptWalletConfig({ wallet, walletConfig });
-  await uploadToGaiaHub('wallet-config.json', encrypted, gaiaHubConfig);
+  await uploadToGaiaHub(
+    'wallet-config.json',
+    encrypted,
+    gaiaHubConfig,
+    undefined,
+    undefined,
+    undefined,
+    true
+  );
 };
 
 export const encryptWalletConfig = async ({
