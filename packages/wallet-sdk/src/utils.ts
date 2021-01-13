@@ -34,15 +34,40 @@ interface HubInfo {
   read_url_prefix: string;
 }
 
-export const getHubInfo = async (hubUrl: string) => {
-  const response = await fetchPrivate(`${hubUrl}/hub_info`);
+export const getHubInfo = async (gaiaHubUrl: string) => {
+  const response = await fetchPrivate(`${gaiaHubUrl}/hub_info`);
   const data: HubInfo = await response.json();
   return data;
 };
 
-export const getHubPrefix = async (hubUrl: string) => {
-  const { read_url_prefix } = await getHubInfo(hubUrl);
+export const getHubPrefix = async (gaiaHubUrl: string) => {
+  const { read_url_prefix } = await getHubInfo(gaiaHubUrl);
   return read_url_prefix;
+};
+
+const makeGaiaAuthToken = ({
+  hubInfo,
+  privateKey,
+  gaiaHubUrl,
+}: {
+  hubInfo: HubInfo;
+  privateKey: string;
+  gaiaHubUrl: string;
+}) => {
+  const challengeText = hubInfo.challenge_text;
+  const iss = getPublicKeyFromPrivate(privateKey);
+
+  const salt = randomBytes(16).toString('hex');
+  const payload: GaiaAuthPayload = {
+    gaiaHubUrl,
+    iss,
+    salt,
+  };
+  if (challengeText) {
+    payload.gaiaChallenge = challengeText;
+  }
+  const token = new TokenSigner('ES256K', privateKey).sign(payload);
+  return `v1:${token}`;
 };
 
 interface ConnectToGaiaOptions {
@@ -77,23 +102,6 @@ interface GaiaAuthPayload {
   [key: string]: Json;
 }
 
-const makeGaiaAuthToken = ({ hubInfo, privateKey, gaiaHubUrl }: ConnectToGaiaOptions) => {
-  const challengeText = hubInfo.challenge_text;
-  const iss = getPublicKeyFromPrivate(privateKey);
-
-  const salt = randomBytes(16).toString('hex');
-  const payload: GaiaAuthPayload = {
-    gaiaHubUrl,
-    iss,
-    salt,
-  };
-  if (challengeText) {
-    payload.gaiaChallenge = challengeText;
-  }
-  const token = new TokenSigner('ES256K', privateKey).sign(payload);
-  return `v1:${token}`;
-};
-
 export const makeGaiaAssociationToken = ({
   privateKey: secretKeyHex,
   childPublicKeyHex,
@@ -116,4 +124,26 @@ export const makeGaiaAssociationToken = ({
   const tokenSigner = new TokenSigner('ES256K', signerKeyHex);
   const token = tokenSigner.sign(payload);
   return token;
+};
+
+/**
+ * When you already know the Gaia read URL, make a Gaia config that doesn't have to fetch `/hub_info`
+ */
+export const convertGaiaHubConfig = ({
+  gaiaHubConfig,
+  privateKey,
+}: {
+  gaiaHubConfig: GaiaHubConfig;
+  privateKey: string;
+}): GaiaHubConfig => {
+  const address = ecPairToAddress(
+    hexStringToECPair(privateKey + (privateKey.length === 64 ? '01' : ''))
+  );
+  return {
+    url_prefix: gaiaHubConfig.url_prefix,
+    max_file_upload_size_megabytes: 100,
+    address,
+    token: 'not_used',
+    server: 'not_used',
+  };
 };

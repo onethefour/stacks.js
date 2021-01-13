@@ -47,14 +47,9 @@ export const getOrCreateWalletConfig = async ({
 }): Promise<WalletConfig> => {
   const config = await fetchWalletConfig({ wallet, gaiaHubConfig });
   if (config) return config;
-  const newConfig: WalletConfig = {
-    accounts: wallet.accounts.map(account => ({
-      username: account.username,
-      apps: {},
-    })),
-  };
+  const newConfig = makeWalletConfig(wallet);
   if (!skipUpload) {
-    await updateWalletConfig({ wallet, walletConfig: newConfig, gaiaHubConfig });
+    await updateWalletConfig({ wallet, gaiaHubConfig });
   }
   return newConfig;
 };
@@ -85,13 +80,14 @@ export const fetchWalletConfig = async ({
 
 export const updateWalletConfig = async ({
   wallet,
-  walletConfig,
+  walletConfig: _walletConfig,
   gaiaHubConfig,
 }: {
   wallet: Wallet;
-  walletConfig: WalletConfig;
+  walletConfig?: WalletConfig;
   gaiaHubConfig: GaiaHubConfig;
 }) => {
+  const walletConfig = _walletConfig || makeWalletConfig(wallet);
   const encrypted = await encryptWalletConfig({ wallet, walletConfig });
   await uploadToGaiaHub(
     'wallet-config.json',
@@ -102,7 +98,17 @@ export const updateWalletConfig = async ({
     undefined,
     true
   );
+  return walletConfig;
 };
+
+export function makeWalletConfig(wallet: Wallet): WalletConfig {
+  return {
+    accounts: wallet.accounts.map(account => ({
+      username: account.username,
+      apps: {},
+    })),
+  };
+}
 
 export const encryptWalletConfig = async ({
   wallet,

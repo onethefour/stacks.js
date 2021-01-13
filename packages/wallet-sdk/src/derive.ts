@@ -39,6 +39,22 @@ export const deriveConfigPrivateKey = (rootNode: BIP32Interface): Buffer => {
 };
 
 /**
+ * Before the Stacks Wallet, the authenticator used with Connect used a different format
+ * and path for the config file.
+ *
+ * The path for this key is `m/45'`
+ * @param rootNode A keychain that was created using the wallet's seed phrase
+ */
+export const deriveLegacyConfigPrivateKey = (rootNode: BIP32Interface): string => {
+  const derivedLegacyKey = rootNode.deriveHardened(45).privateKey;
+  if (!derivedLegacyKey) {
+    throw new TypeError('Unable to derive config key for wallet identities');
+  }
+  const configPrivateKey = derivedLegacyKey.toString('hex');
+  return configPrivateKey;
+};
+
+/**
  * Generate a salt, which is used for generating an app-specific private key
  * @param rootNode
  */
